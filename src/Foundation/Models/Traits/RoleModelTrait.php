@@ -104,4 +104,9 @@ trait RoleModelTrait
         $this->permission_cache = $permissionCache;
         $this->save();
     }
+
+    public function initializeRoleModelTrait()
+    {
+        $this->casts['permission_cache'] = 'json';
+    }
 }

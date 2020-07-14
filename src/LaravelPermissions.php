@@ -3,6 +3,7 @@
 namespace Audentio\LaravelPermissions;
 
 use Audentio\LaravelBase\Foundation\AbstractModel;
+use Audentio\LaravelBase\Illuminate\Database\Schema\Blueprint;
 
 class LaravelPermissions
 {
@@ -16,5 +17,10 @@ class LaravelPermissions
     public static function runsMigrations(): bool
     {
         return self::$runsMigrations;
+    }
+
+    public static function addSchemaToRoleOwner(Blueprint $table) {
+        $table->json('role_ids')->nullable();
+        $table->json('permission_cache')->nullable();
     }
 }

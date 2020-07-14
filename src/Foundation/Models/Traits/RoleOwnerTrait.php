@@ -206,11 +206,40 @@ trait RoleOwnerTrait
                 $permissionCache[$contentKey] = [];
             }
 
-            dump($role->permission_cache);die;
             foreach ($role->permission_cache as $permissionId => $permission) {
+                if (!isset($permissionCache[$contentKey][$permissionId])) {
+                    $permissionCache[$contentKey][$permissionId] = $permission;
+                    continue;
+                }
 
+                $current = $permissionCache[$contentKey][$permissionId];
+                if ($current['value'] === -1) {
+                    continue;
+                }
+
+                $replaceCurrent = false;
+                switch(permission['kind']) {
+                    case 'bool':
+                    case 'int':
+                        if ($permission['value'] > $current['value']) $replaceCurrent = true;
+                        break;
+
+                    case 'rint':
+                        if ($permission['value'] < $current['value']) $replaceCurrent = false;
+                        break;
+                }
             }
         }
+
+        foreach ($permissionCache as $contentKey => $permissions) {
+            foreach ($permissions as $permissionId => $permission) {
+                if ($permission['value'] === 0) {
+                    unset($permissionCache[$contentKey][$permissionId]);
+                }
+            }
+        }
+
+        dump($permissionCache);die;
     }
 
     protected function canRebuildPermissions(): bool
