@@ -1,0 +1,26 @@
+{
+    "name": "audentio/laravel-permissions",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jake Booher",
+            "email": "jakeb@audentio.com"
+        }
+    ],
+    "require": {
+        "audentio/laravel-base": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Audentio\\LaravelPermissions\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Audentio\\LaravelPermissions\\Providers\\PermissionServiceProvider"
+            ]
+        }
+    }
+}
