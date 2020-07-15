@@ -68,6 +68,25 @@ trait RoleOwnerTrait
         return in_array($role, $this->role_ids);
     }
 
+    public function hasContentRole($role, $contentType, $contentId = null): bool
+    {
+        if ($role instanceof RoleModelInterface) {
+            $role = $role->id;
+        }
+
+        if ($contentType instanceof AbstractModel) {
+            $contentId = $contentType->getKey();
+            $contentType = $contentType->getContentType();
+        } elseif (empty($contentId)) {
+            throw new \LogicException('You must specify both $contentType, and $contentId or provide an instance of AbstractModel for $contentType.');
+        }
+
+        $contentKey = ContentTypeUtil::getFriendlyContentTypeName($contentType) . '__' . $contentId;
+        $roleKey = $role . '__' . $contentKey;
+
+        return in_array($roleKey, $this->role_ids);
+    }
+
     public function addRoles(array $roles, bool $rebuildPermissionCache = true): void
     {
         foreach ($roles as $role) {
@@ -177,7 +196,11 @@ trait RoleOwnerTrait
             ['role_assignments.content_type', $content->getContentType()],
             ['role_assignments.content_id', $content->getKey()],
         ])->exists()) {
-//            $this->roles()->detach($role->id);
+            \DB::table('role_assignments')->where([
+                ['role_id', $role->id],
+                ['content_type', $content->getContentType()],
+                ['content_id', $content->getKey()],
+            ])->delete();
         }
 
         if ($rebuildPermissionCache) {
@@ -196,10 +219,11 @@ trait RoleOwnerTrait
         $this->load('roles');
 
         foreach ($this->roles as $role) {
-            $roleIds = [];
+            $roleId = $role->id;
             $contentKey = 'global';
             if ($role->content_type) {
                 $contentKey = ContentTypeUtil::getFriendlyContentTypeName($role->pivot->content_type) . '__' . $role->pivot->content_id;
+                $roleId = $roleId . '__' . $contentKey;
             }
 
             if (!isset($permissionCache[$contentKey])) {
@@ -239,7 +263,17 @@ trait RoleOwnerTrait
             }
         }
 
-        dump($permissionCache);die;
+        $this->permission_cache = $permissionCache;
+        $this->role_ids = $roleIds;
+        $this->save();
+
+        return $permissionCache;
+    }
+
+    public function initializeRoleModelTrait(): void
+    {
+        $this->casts['role_ids'] = 'json';
+        $this->casts['permission_cache'] = 'json';
     }
 
     protected function canRebuildPermissions(): bool

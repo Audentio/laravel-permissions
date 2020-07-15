@@ -22,5 +22,6 @@ class LaravelPermissions
     public static function addSchemaToRoleOwner(Blueprint $table) {
         $table->json('role_ids')->nullable();
         $table->json('permission_cache')->nullable();
+        $table->boolean('rebuild_permissions')->default(0);
     }
 }
