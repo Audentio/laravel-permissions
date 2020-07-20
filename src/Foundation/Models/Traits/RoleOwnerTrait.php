@@ -270,7 +270,7 @@ trait RoleOwnerTrait
         return $permissionCache;
     }
 
-    public function initializeRoleModelTrait(): void
+    public function initializeRoleOwnerTrait(): void
     {
         $this->casts['role_ids'] = 'json';
         $this->casts['permission_cache'] = 'json';
