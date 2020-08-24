@@ -242,7 +242,7 @@ trait RoleOwnerTrait
                 }
 
                 $replaceCurrent = false;
-                switch(permission['kind']) {
+                switch($permission['kind']) {
                     case 'bool':
                     case 'int':
                         if ($permission['value'] > $current['value']) $replaceCurrent = true;
