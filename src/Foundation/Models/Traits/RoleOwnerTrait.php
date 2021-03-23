@@ -225,6 +225,8 @@ trait RoleOwnerTrait
                 $contentKey = ContentTypeUtil::getFriendlyContentTypeName($role->pivot->content_type) . '__' . $role->pivot->content_id;
                 $roleId = $roleId . '__' . $contentKey;
             }
+            
+            $roleIds[] = $roleId;
 
             if (!isset($permissionCache[$contentKey])) {
                 $permissionCache[$contentKey] = [];
