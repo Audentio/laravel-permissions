@@ -265,6 +265,7 @@ trait RoleOwnerTrait
             }
         }
 
+        $this->rebuild_permissions = false;
         $this->permission_cache = $permissionCache;
         $this->role_ids = $roleIds;
         $this->save();
